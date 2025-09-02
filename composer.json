@@ -20,5 +20,7 @@
             "email": "ivan.bekker@stratusolve.com"
         }
     ],
-    "require": {}
+    "require": {
+        "php": ">=8.3"
+    }
 }
