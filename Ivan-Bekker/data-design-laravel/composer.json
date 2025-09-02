@@ -1,0 +1,24 @@
+{
+    "name": "ivanbekker/data-design-laravel",
+    "type": "library",
+    "license": "MIT",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "PrevailExcel\\ActionServiceTrait\\DivbloxServiceProvider"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Ivanbekker\\DataDesignLaravel\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ivan Bekker",
+            "email": "ivan.bekker@stratusolve.com"
+        }
+    ],
+    "require": {}
+}
