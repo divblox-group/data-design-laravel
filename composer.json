@@ -2,10 +2,12 @@
     "name": "ivanbekker/data-design-laravel",
     "type": "library",
     "license": "MIT",
+    "description": "Some type of description",
+    "version":
     "extra": {
         "laravel": {
             "providers": [
-                "PrevailExcel\\ActionServiceTrait\\DivbloxServiceProvider"
+                "Divblox\\Providers\\DivbloxServiceProvider"
             ]
         }
     },

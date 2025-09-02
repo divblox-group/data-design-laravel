@@ -1,6 +1,6 @@
 <?php
 
-namespace PrevailExcel\ActionServiceTrait;
+namespace Divblox\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use DivbloxDataModelImporter;
