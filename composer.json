@@ -10,9 +10,12 @@
             ]
         }
     },
+    "archive": {
+        "exclude": [".github"]
+    },
     "autoload": {
         "psr-4": {
-            "Ivanbekker\\DataDesignLaravel\\": "src/"
+            "Divblox\\": "src/"
         }
     },
     "authors": [
