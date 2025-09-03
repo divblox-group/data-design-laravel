@@ -94,7 +94,7 @@ class DataDesignImporter extends Command implements PromptsForMissingInput {
                 ]);
             }
 
-            $MigrationFileNameStr = \App\Console\Commands\database_path("migrations/{$this->createMigration($EntityNameStr)}");
+            $MigrationFileNameStr = database_path("migrations/{$this->createMigration($EntityNameStr)}");
             if (!File::exists($MigrationFileNameStr)) {
                 $this->deleteMigration($MigrationFileNameStr);
                 $this->error("Failed to create migration file: {$EntityNameStr}");
