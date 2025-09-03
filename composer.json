@@ -3,6 +3,7 @@
     "type": "library",
     "license": "MIT",
     "description": "Some type of description",
+    "version": "v1.1.0",
     "extra": {
         "laravel": {
             "providers": [
