@@ -1,12 +1,15 @@
 <?php
 
-namespace Ivanbekker\DataDesignLaravel\Providers;
+namespace Divblox\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Ivanbekker\DataDesignLaravel\Console\DataModelImporter;
+use Divblox\Console\DataModelImporter;
 
 class DivbloxServiceProvider extends ServiceProvider
 {
+    public function boot() {
+        
+    }
     /**
      * Register the application services.
      *

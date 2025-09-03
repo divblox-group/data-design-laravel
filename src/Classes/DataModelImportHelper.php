@@ -1,6 +1,6 @@
 <?php
 
-namespace Ivanbekker\DataDesignLaravel\Classes;
+namespace Divblox\Classes;
 
 use Illuminate\Support\Str;
 

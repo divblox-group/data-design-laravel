@@ -1,6 +1,6 @@
 <?php
 
-namespace Ivanbekker\DataDesignLaravel\Console;
+namespace Divblox\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
