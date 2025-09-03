@@ -1,5 +1,6 @@
 <?php
 
+namespace Ivanbekker\DataDesignLaravel\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
@@ -17,7 +18,7 @@ use ZipArchive;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Env;
 
-class DivbloxDataModelImporter extends Command implements PromptsForMissingInput {
+class DataModelImporter extends Command implements PromptsForMissingInput {
     /**
      * The name and signature of the console command.
      *

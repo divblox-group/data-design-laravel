@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Classes;
+namespace Ivanbekker\DataDesignLaravel\Classes;
 
 use Illuminate\Support\Str;
 
-class DivbloxDataModelImportHelper extends DivbloxDataDesignHelper {
+class DataModelImportHelper extends DataDesignHelper {
     public function setUpFunction(): bool {
         $ColumnDefinitionsArr = [
             "\$table->id();"

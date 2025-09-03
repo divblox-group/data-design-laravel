@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Classes;
+namespace Ivanbekker\DataDesignLaravel\Classes;
 
 use Illuminate\Support\Facades\File;
 
-abstract class DivbloxDataDesignHelper {
+abstract class DataDesignHelper {
     protected bool $UseModelForReferenceBool = false;
     protected bool $AddTimestampsToMigrationsBool = false;
     protected string $MigrationNameStr;

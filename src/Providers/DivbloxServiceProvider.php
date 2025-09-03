@@ -1,9 +1,9 @@
 <?php
 
-namespace Divblox\Providers;
+namespace Ivanbekker\DataDesignLaravel\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use DivbloxDataModelImporter;
+use Ivanbekker\DataDesignLaravel\Console\DataModelImporter;
 
 class DivbloxServiceProvider extends ServiceProvider
 {
@@ -14,6 +14,6 @@ class DivbloxServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->commands(DivbloxDataModelImporter::class);
+        $this->commands(DataModelImporter::class);
     }
 }
