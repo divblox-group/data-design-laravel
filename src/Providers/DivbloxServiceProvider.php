@@ -3,7 +3,7 @@
 namespace Divblox\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Divblox\Console\DataModelImporter;
+use Divblox\Console\DataDesignImporter;
 
 class DivbloxServiceProvider extends ServiceProvider
 {
@@ -17,6 +17,6 @@ class DivbloxServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->commands(DataModelImporter::class);
+        $this->commands(DataDesignImporter::class);
     }
 }

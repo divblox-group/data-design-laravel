@@ -4,7 +4,7 @@ namespace Divblox\Classes;
 
 use Illuminate\Support\Str;
 
-class DataModelImportHelper extends DataDesignHelper {
+class DataDesignImporter extends DataDesignHelper {
     public function setUpFunction(): bool {
         $ColumnDefinitionsArr = [
             "\$table->id();"

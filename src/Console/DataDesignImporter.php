@@ -18,7 +18,7 @@ use ZipArchive;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Env;
 
-class DataModelImporter extends Command implements PromptsForMissingInput {
+class DataDesignImporter extends Command implements PromptsForMissingInput {
     /**
      * The name and signature of the console command.
      *
@@ -80,18 +80,15 @@ class DataModelImporter extends Command implements PromptsForMissingInput {
         $ImportProgressObj = $this->output->createProgressBar($TotalEntitiesToImportInt);
         $ImportProgressObj->start();
 
-        $MigrationModifierObj = new DivbloxDataModelImportHelper();
+        $DataDesignImporterObj = new \Divblox\Classes\DataDesignImporter();
         foreach ($ImportedDataModelJsonArr as $EntityNameStr => $ImportedDataModelItemArr) {
-            if ($EntityNameStr == "account") {
-                \Log::info(print_r($ImportedDataModelItemArr, true));
-            }
             if (empty($ImportedDataModelItemArr["attributes"])) {
                 $this->error("Entity attributes not defined: {$EntityNameStr}");
                 continue;
             }
 
             $PascalEntityNameStr = Str::pascal($EntityNameStr);
-            if ($CreateModelFilesBool && !$MigrationModifierObj->checkModelFile($PascalEntityNameStr)) {
+            if ($CreateModelFilesBool && !$DataDesignImporterObj->checkModelFile($PascalEntityNameStr)) {
                 Artisan::call("make:model", [
                     "name" => $PascalEntityNameStr
                 ]);
@@ -104,25 +101,25 @@ class DataModelImporter extends Command implements PromptsForMissingInput {
                 continue;
             }
 
-            $MigrationModifierObj->setMigrationName(Str::snake(Str::plural($EntityNameStr)));
-            $MigrationModifierObj->setMigrationFilePath($MigrationFileNameStr);
-            $MigrationModifierObj->setUseModelForReference($CreateModelFilesBool);
-            $MigrationModifierObj->setAddTimestampsToMigrations($AddTimestampsToMigrationsBool);
-            $MigrationModifierObj->setMigrationDefinition($ImportedDataModelItemArr);
+            $DataDesignImporterObj->setMigrationName(Str::snake(Str::plural($EntityNameStr)));
+            $DataDesignImporterObj->setMigrationFilePath($MigrationFileNameStr);
+            $DataDesignImporterObj->setUseModelForReference($CreateModelFilesBool);
+            $DataDesignImporterObj->setAddTimestampsToMigrations($AddTimestampsToMigrationsBool);
+            $DataDesignImporterObj->setMigrationDefinition($ImportedDataModelItemArr);
 
-            if (!$MigrationModifierObj->resetMigrationFile(true)) {
+            if (!$DataDesignImporterObj->resetMigrationFile(true)) {
                 $this->deleteMigration($MigrationFileNameStr);
                 $this->newLine();
                 $this->error("Failed to reset '{$EntityNameStr}' migration file.");
                 continue;
             }
-            if (!$MigrationModifierObj->setUpFunction()) {
+            if (!$DataDesignImporterObj->setUpFunction()) {
                 $this->deleteMigration($MigrationFileNameStr);
                 $this->newLine();
                 $this->error("Failed to set '{$EntityNameStr}' UP function in migration file.");
                 continue;
             }
-            if (!$MigrationModifierObj->setDownFunction()) {
+            if (!$DataDesignImporterObj->setDownFunction()) {
                 $this->deleteMigration($MigrationFileNameStr);
                 $this->newLine();
                 $this->error("Failed to set '{$EntityNameStr}' DOWN function in migration file.");
