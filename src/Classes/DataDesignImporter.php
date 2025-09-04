@@ -86,6 +86,16 @@ PHP);
                 } else if (is_string($ColumnDefinitionArr["default"])) {
                     $ColumnDefinitionArr["default"] = "'{$ColumnDefinitionArr["default"]}'";
                 }
+                switch (Str::upper($DataTypeFunctionStr)) {
+                    case Str::upper("JSON"):
+                        if (empty($ColumnDefinitionArr["default"]) ||
+                            $ColumnDefinitionArr["default"] === "'{}'" ||
+                            $ColumnDefinitionArr["default"] === "'[]'"
+                        ) {
+                            $ColumnDefinitionArr["default"] = "DB::raw('(JSON_ARRAY())')";
+                        }
+                    break;
+                }
                 $ColumnDefaultStr = "->default({$ColumnDefinitionArr["default"]})";
             }
 
