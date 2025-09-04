@@ -13,11 +13,38 @@ class DataDesignImporter extends DataDesignHelper {
         if ($this->AddTimestampsToMigrationsBool) {
             $ColumnDefinitionsArr[] = "\$table->datetimes();";
         }
-        foreach ($this->MigrationDefinitionArr["attributes"] as $ColumnNameStr => $ColumnDefinitionArr) {
+
+        $ColumnDefinitionsArr = array_merge(
+            $ColumnDefinitionsArr,
+            $this->getTableColumnDefinitions($this->MigrationDefinitionArr["attributes"])
+        );
+        $ColumnDefinitionsArr[] = "";
+        $ColumnDefinitionsArr = array_merge(
+            $ColumnDefinitionsArr,
+            $this->getTableRelationshipDefinitions($this->MigrationDefinitionArr["relationships"])
+        );
+
+        $ColumnDefinitionsStr = implode("\n\t\t\t", $ColumnDefinitionsArr);
+        return $this->setMigrationFunctionContent(self::FUNCTION_UP, <<<PHP
+    Schema::create('{$this->MigrationNameStr}', function (Blueprint \$table) {
+            {$ColumnDefinitionsStr}
+        });
+PHP);
+    }
+    public function setDownFunction(): bool {
+        return $this->setMigrationFunctionContent(self::FUNCTION_DOWN, <<<PHP
+            Schema::dropIfExists('{$this->MigrationNameStr}');
+        PHP
+        );
+    }
+
+    protected function getTableColumnDefinitions(array $TableAttributesArr): array {
+        $ColumnDefinitionsArr = [];
+        foreach ($TableAttributesArr as $ColumnNameStr => $ColumnDefinitionArr) {
             if (in_array(Str::upper($ColumnNameStr), [
                 Str::upper("Id")
             ])) {
-                 continue;
+                continue;
             }
             if (empty(self::MYSQL_DATA_TYPE_MAP[strtoupper($ColumnDefinitionArr["type"])])) {
                 continue;
@@ -69,10 +96,11 @@ class DataDesignImporter extends DataDesignHelper {
 \$table->{$DataTypeFunctionStr}({$this->buildNamedParameterString($ColumnFunctionParameterArr)}){$ColumnIndexMix}{$ColumnDefaultStr}{$ColumnNullableStr};
 PHP;
         }
-
-
-        $ColumnDefinitionsArr[] = "";
-        foreach ($this->MigrationDefinitionArr["relationships"] as $ReferenceTableNameStr => $ForeignKeyNamesArr) {
+        return $ColumnDefinitionsArr;
+    }
+    protected function getTableRelationshipDefinitions(array $TableRelationshipsArr): array {
+        $ColumnDefinitionsArr = [];
+        foreach ($TableRelationshipsArr as $ReferenceTableNameStr => $ForeignKeyNamesArr) {
             $PascalTableNameStr = Str::pascal($ReferenceTableNameStr);
             $PluralSnakeTableNameStr = Str::snake(Str::plural($ReferenceTableNameStr));
             foreach ($ForeignKeyNamesArr as $ForeignKeyNameStr) {
@@ -80,30 +108,17 @@ PHP;
                     $this->checkModelFile($PascalTableNameStr)
                 ) {
                     $ColumnDefinitionsArr[] = <<<PHP
-\$table->foreignIdFor(\App\Models\\$PascalTableNameStr::class)->index();
+\$table->foreignIdFor(\App\Models\\$PascalTableNameStr::class)->index()->nullable();
 PHP;
                 } else {
                     $ForeignKeyNameStr = Str::snake($ForeignKeyNameStr);
                     $ColumnDefinitionsArr[] = <<<PHP
-\$table->foreignId('{$ForeignKeyNameStr}')->constrained('{$PluralSnakeTableNameStr}', 'Id', '{$this->MigrationNameStr}_{$ForeignKeyNameStr}')->index();
+\$table->foreignId('{$ForeignKeyNameStr}')->constrained('{$PluralSnakeTableNameStr}', 'Id', '{$this->MigrationNameStr}_{$ForeignKeyNameStr}')->index()->nullable();
 PHP;
                 }
             }
-
         }
-
-        $ColumnDefinitionsStr = implode("\n\t\t\t", $ColumnDefinitionsArr);
-        return $this->setMigrationFunctionContent(self::FUNCTION_UP, <<<PHP
-    Schema::create('{$this->MigrationNameStr}', function (Blueprint \$table) {
-            {$ColumnDefinitionsStr}
-        });
-PHP);
-    }
-    public function setDownFunction(): bool {
-        return $this->setMigrationFunctionContent(self::FUNCTION_DOWN, <<<PHP
-            Schema::dropIfExists('{$this->MigrationNameStr}');
-        PHP
-        );
+        return $ColumnDefinitionsArr;
     }
 
     protected function setMigrationFunction(string $FunctionNameStr): bool {
