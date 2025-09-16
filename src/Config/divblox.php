@@ -2,9 +2,12 @@
 return [
     "data_design" => [
         "transformers" => [
-            "table" => null,
+            "table" => [
+                "class" => null,
+                "method" => null
+            ],
             "column" => null,
-            "index" => null
+            "index" => fn($value) => $value
         ]
     ]
 ];

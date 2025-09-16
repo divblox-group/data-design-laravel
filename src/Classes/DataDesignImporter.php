@@ -26,7 +26,7 @@ class DataDesignImporter extends DataDesignHelper {
 
         $ColumnDefinitionsStr = implode("\n\t\t\t", $ColumnDefinitionsArr);
         return $this->setMigrationFunctionContent(self::FUNCTION_UP, <<<PHP
-    Schema::create('{$this->MigrationNameStr}', function (Blueprint \$table) {
+    Schema::create('{$this->processTransformer(config("divblox.data_design.transformers.table"), $this->MigrationNameStr)}', function (Blueprint \$table) {
             {$ColumnDefinitionsStr}
         });
 PHP);
@@ -55,7 +55,7 @@ PHP);
             foreach ($ColumnFunctionParameterArr as $FunctionParameterNameStr => $FunctionParameterValueMix) {
                 switch ($FunctionParameterNameStr) {
                     case "column":
-                        $ColumnFunctionParameterArr[$FunctionParameterNameStr] = $ColumnNameStr;
+                        $ColumnFunctionParameterArr[$FunctionParameterNameStr] = $this->processTransformer(config("divblox.data_design.transformers.column"), $ColumnNameStr);
                     break;
                     default:
                         if (empty($FunctionParameterValueMix)) {
