@@ -225,7 +225,7 @@ class DataDesignImporter extends Command implements PromptsForMissingInput {
             $this->fail("Zip does not contain the needed file for import: '{$DataModelJsonFileNameStr}");
         }
 
-        $ExtractedDataModelJsonFilePathStr = \App\Console\Commands\base_path($DataModelJsonFileNameStr);
+        $ExtractedDataModelJsonFilePathStr = base_path($DataModelJsonFileNameStr);
         $this->info("Extracting file: {$DataModelJsonFilePathStr} from zip into {$ExtractedDataModelJsonFilePathStr}");
 
         if (file_put_contents($ExtractedDataModelJsonFilePathStr, $ZipArchiveObj->getFromName($DataModelJsonFilePathStr)) === false) {
