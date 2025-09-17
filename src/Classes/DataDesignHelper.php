@@ -268,23 +268,4 @@ abstract class DataDesignHelper {
         }
         return '['.implode(', ', $ArrayElementsArr).']';
     }
-
-    protected function processTransformer(array|Closure $TransformerConfigMix, string $TransformingInputStr) {
-        if (empty($TransformerConfigMix)) {
-            return $TransformingInputStr;
-        }
-        if (is_array($TransformerConfigMix)) {
-            if (empty($TransformerConfigMix["class"]) ||
-                empty($TransformerConfigMix["method"])
-            ) {
-                return $TransformingInputStr;
-            }
-            return $TransformerConfigMix["class"]::{$TransformerConfigMix["method"]}($TransformingInputStr);
-        }
-
-        if ($TransformerConfigMix instanceof Closure) {
-            return $TransformerConfigMix($TransformingInputStr);
-        }
-        return $TransformingInputStr;
-    }
 }

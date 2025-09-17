@@ -17,6 +17,7 @@ use App\Classes\DivbloxDataModelImportHelper;
 use ZipArchive;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Env;
+use Divblox\Classes\Helper;
 
 class DataDesignImporter extends Command implements PromptsForMissingInput {
     /**
@@ -86,11 +87,10 @@ class DataDesignImporter extends Command implements PromptsForMissingInput {
                 $this->error("Entity attributes not defined: {$EntityNameStr}");
                 continue;
             }
-
-            $PascalEntityNameStr = Str::pascal($EntityNameStr);
-            if ($CreateModelFilesBool && !$DataDesignImporterObj->checkModelFile($PascalEntityNameStr)) {
+            $TransformedEntityNameStr = Helper::processConfigTransformer("divblox.data_design.transformers.model", $EntityNameStr);
+            if ($CreateModelFilesBool && !$DataDesignImporterObj->checkModelFile($TransformedEntityNameStr)) {
                 Artisan::call("make:model", [
-                    "name" => $PascalEntityNameStr
+                    "name" => $TransformedEntityNameStr
                 ]);
             }
 
