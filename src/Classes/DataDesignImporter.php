@@ -112,14 +112,14 @@ PHP;
     protected function getTableRelationshipDefinitions(array $TableRelationshipsArr): array {
         $ColumnDefinitionsArr = [];
         foreach ($TableRelationshipsArr as $ReferenceTableNameStr => $ForeignKeyNamesArr) {
-            $PascalTableNameStr = Str::pascal($ReferenceTableNameStr);
+            $TransformedEntityNameStr = Helper::processConfigTransformer("divblox.data_design.transformers.model", $ReferenceTableNameStr);
             $PluralSnakeTableNameStr = Str::snake(Str::plural($ReferenceTableNameStr));
             foreach ($ForeignKeyNamesArr as $ForeignKeyNameStr) {
                 if ($this->UseModelForReferenceBool ||
-                    $this->checkModelFile($PascalTableNameStr)
+                    $this->checkModelFile($TransformedEntityNameStr)
                 ) {
                     $ColumnDefinitionsArr[] = <<<PHP
-\$table->foreignIdFor(\App\Models\\$PascalTableNameStr::class)->index()->nullable();
+\$table->foreignIdFor(\App\Models\\$TransformedEntityNameStr::class)->index()->nullable();
 PHP;
                 } else {
                     $ForeignKeyNameStr = Str::snake($ForeignKeyNameStr);
