@@ -10,17 +10,21 @@ abstract class Helper {
         if (empty($DivbloxConfigMix)) {
             return $PreTransformedInputMix;
         }
-        if (is_array($DivbloxConfigMix)) {
-            if (empty($DivbloxConfigMix["class"]) ||
-                empty($DivbloxConfigMix["method"])
-            ) {
-                return $PreTransformedInputMix;
-            }
-            return $DivbloxConfigMix["class"]::{$DivbloxConfigMix["method"]}($PreTransformedInputMix);
+        if (!is_array($DivbloxConfigMix)) {
+            return $PreTransformedInputMix;
         }
 
-        if ($DivbloxConfigMix instanceof Closure) {
-            return $DivbloxConfigMix($PreTransformedInputMix);
+        foreach ($DivbloxConfigMix as $TransformingClassStr => $TransformingConfigMix) {
+            switch (gettype($TransformingConfigMix)) {
+                case "string":
+                    $PreTransformedInputMix = $TransformingClassStr::$TransformingConfigMix($PreTransformedInputMix);
+                break;
+                case "array":
+                    foreach ($TransformingConfigMix as $TransformingConfigStr) {
+                        $PreTransformedInputMix = $TransformingClassStr::$TransformingConfigStr($PreTransformedInputMix);
+                    }
+                break;
+            }
         }
         return $PreTransformedInputMix;
     }

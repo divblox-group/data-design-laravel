@@ -27,9 +27,11 @@ class DataDesignImporter extends DataDesignHelper {
         $ColumnDefinitionsStr = implode("\n\t\t\t", $ColumnDefinitionsArr);
         $TableNameStr = Helper::processConfigTransformer("divblox.data_design.transformers.table", $this->MigrationNameStr);
         return $this->setMigrationFunctionContent(self::FUNCTION_UP, <<<PHP
-    Schema::create('{$TableNameStr}', function (Blueprint \$table) {
+Schema::disableForeignKeyConstraints();
+        Schema::create('{$TableNameStr}', function (Blueprint \$table) {
             {$ColumnDefinitionsStr}
         });
+        Schema::enableForeignKeyConstraints();
 PHP);
     }
     public function setDownFunction(): bool {
@@ -112,21 +114,25 @@ PHP;
     protected function getTableRelationshipDefinitions(array $TableRelationshipsArr): array {
         $ColumnDefinitionsArr = [];
         foreach ($TableRelationshipsArr as $ReferenceTableNameStr => $ForeignKeyNamesArr) {
-            $TransformedEntityNameStr = Helper::processConfigTransformer("divblox.data_design.transformers.model", $ReferenceTableNameStr);
+            //            $PascalTableNameStr = Str::pascal($ReferenceTableNameStr);
             $PluralSnakeTableNameStr = Str::snake(Str::plural($ReferenceTableNameStr));
+            $SingularSnakeTableNameStr = Str::snake(Str::singular($ReferenceTableNameStr));
             foreach ($ForeignKeyNamesArr as $ForeignKeyNameStr) {
-                if ($this->UseModelForReferenceBool ||
-                    $this->checkModelFile($TransformedEntityNameStr)
-                ) {
-                    $ColumnDefinitionsArr[] = <<<PHP
-\$table->foreignIdFor(\App\Models\\$TransformedEntityNameStr::class)->index()->nullable();
+                $ColumnDefinitionsArr[] = <<<PHP
+\$table->foreignId('{$SingularSnakeTableNameStr}_id')->nullable()->constrained('{$PluralSnakeTableNameStr}', 'id')->onUpdate('cascade')->onDelete('cascade');
 PHP;
-                } else {
-                    $ForeignKeyNameStr = Str::snake($ForeignKeyNameStr);
-                    $ColumnDefinitionsArr[] = <<<PHP
-\$table->foreignId('{$ForeignKeyNameStr}')->constrained('{$PluralSnakeTableNameStr}', 'Id', '{$this->MigrationNameStr}_{$ForeignKeyNameStr}')->index()->nullable();
-PHP;
-                }
+                //                if ($this->UseModelForReferenceBool ||
+                //                    $this->checkModelFile($PascalTableNameStr)
+                //                ) {
+                //                    $ColumnDefinitionsArr[] = <<<PHP
+                //\$table->foreignIdFor(\App\Models\\$PascalTableNameStr::class)->index()->nullable();
+                //PHP;
+                //                } else {
+                //                    $ForeignKeyNameStr = Str::snake($ForeignKeyNameStr);
+                //                    $ColumnDefinitionsArr[] = <<<PHP
+                //\$table->foreignId('{$ForeignKeyNameStr}')->constrained('{$PluralSnakeTableNameStr}', 'Id', '{$this->MigrationNameStr}_{$ForeignKeyNameStr}')->index()->nullable();
+                //PHP;
+                //                }
             }
         }
         return $ColumnDefinitionsArr;
