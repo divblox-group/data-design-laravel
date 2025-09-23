@@ -114,25 +114,21 @@ PHP;
     protected function getTableRelationshipDefinitions(array $TableRelationshipsArr): array {
         $ColumnDefinitionsArr = [];
         foreach ($TableRelationshipsArr as $ReferenceTableNameStr => $ForeignKeyNamesArr) {
-            //            $PascalTableNameStr = Str::pascal($ReferenceTableNameStr);
+            $PascalTableNameStr = Str::pascal($ReferenceTableNameStr);
             $PluralSnakeTableNameStr = Str::snake(Str::plural($ReferenceTableNameStr));
             $SingularSnakeTableNameStr = Str::snake(Str::singular($ReferenceTableNameStr));
             foreach ($ForeignKeyNamesArr as $ForeignKeyNameStr) {
-                $ColumnDefinitionsArr[] = <<<PHP
+                if ($this->UseModelForReferenceBool ||
+                    $this->checkModelFile($PascalTableNameStr)
+                ) {
+                    $ColumnDefinitionsArr[] = <<<PHP
+\$table->foreignIdFor(\App\Models\\$PascalTableNameStr::class)->index()->nullable()->constrained();
+PHP;
+                } else {
+                    $ColumnDefinitionsArr[] = <<<PHP
 \$table->foreignId('{$SingularSnakeTableNameStr}_id')->nullable()->constrained('{$PluralSnakeTableNameStr}', 'id')->onUpdate('cascade')->onDelete('cascade');
 PHP;
-                //                if ($this->UseModelForReferenceBool ||
-                //                    $this->checkModelFile($PascalTableNameStr)
-                //                ) {
-                //                    $ColumnDefinitionsArr[] = <<<PHP
-                //\$table->foreignIdFor(\App\Models\\$PascalTableNameStr::class)->index()->nullable();
-                //PHP;
-                //                } else {
-                //                    $ForeignKeyNameStr = Str::snake($ForeignKeyNameStr);
-                //                    $ColumnDefinitionsArr[] = <<<PHP
-                //\$table->foreignId('{$ForeignKeyNameStr}')->constrained('{$PluralSnakeTableNameStr}', 'Id', '{$this->MigrationNameStr}_{$ForeignKeyNameStr}')->index()->nullable();
-                //PHP;
-                //                }
+                }
             }
         }
         return $ColumnDefinitionsArr;
